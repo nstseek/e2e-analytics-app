@@ -4,19 +4,25 @@ import Fornecedor from './fornecedor';
 import UF from './uf';
 
 export default class Empresa extends Base {
-  nome: string = null;
-  cnpj: string = null;
-  uf: UF = null;
-  uf_id: string = null;
-  fornecedores: Fornecedor[] = null;
-  constructor(obj?: any, fornecedores?: Fornecedor[]) {
+  nome: string = undefined;
+  cnpj: string = undefined;
+  uf: UF = undefined;
+  uf_id: string = undefined;
+  fornecedores: Fornecedor[] = undefined;
+  constructor(
+    obj?: any,
+    fornecedores?: Fornecedor[],
+    upperEmpresa = false,
+    upperFornecedor = false,
+    purge = false
+  ) {
     super();
     if (obj) {
-      autoMapper(obj, this);
+      autoMapper(obj, this, upperEmpresa, purge);
     }
     if (fornecedores) {
       this.fornecedores = fornecedores.map(
-        (fornecedor) => new Fornecedor(fornecedor)
+        (fornecedor) => new Fornecedor(fornecedor, null, upperFornecedor, purge)
       );
     }
   }

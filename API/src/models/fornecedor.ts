@@ -10,13 +10,21 @@ export default class Fornecedor extends Base {
   cpf?: string = null;
   cnpj?: string = null;
   empresas: Empresa[] = null;
-  constructor(obj?: any, empresas?: Empresa[]) {
+  constructor(
+    obj?: any,
+    empresas?: Empresa[],
+    upperFornecedor = false,
+    upperEmpresa = false,
+    purge = false
+  ) {
     super();
     if (obj) {
-      autoMapper(obj, this);
+      autoMapper(obj, this, upperFornecedor, purge);
     }
     if (empresas) {
-      this.empresas = empresas.map((empresa) => new Empresa(empresa));
+      this.empresas = empresas.map(
+        (empresa) => new Empresa(empresa, null, upperEmpresa)
+      );
     }
   }
 }
