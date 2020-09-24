@@ -1,6 +1,5 @@
-
 import Inputmask from 'inputmask';
-import React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from '../../configureStore';
 import { Fornecedor } from '../Fornecedores/Fornecedores';
@@ -10,6 +9,9 @@ import { DataState, updateData } from '../../stores/data';
 import { SystemState, updateSystem } from '../../stores/system';
 import { Dispatch } from 'redux';
 import TableViewer from '../TableViewer/TableViewer';
+import Axios from 'axios';
+import environment from '../../environment';
+import Empresa from '../modals/Empresa/Empresa';
 
 export interface Empresa {
   id?: number;
@@ -27,8 +29,39 @@ interface Props {
 }
 
 const Empresas: React.FC<Props> = (props) => {
+  const [edit, setEdit] = useState<Empresa>(null);
+  const [modal, setModal] = useState(false);
+
+  const refreshData = async () => {
+    try {
+      const empresasResponse = await Axios.get<Empresa[]>(
+        `${environment.baseUrl}/empresa`
+      );
+      props.updateData({
+        empresas: empresasResponse.data
+      });
+    } catch (error) {
+      props.updateSystem({
+        dialog: {
+          content: error,
+          open: true,
+          title: 'Erro'
+        }
+      });
+    }
+  };
   return (
     <div>
+      <Empresa
+        onCancel={() => setModal(false)}
+        edit={edit}
+        open={modal}
+        onSave={async (body) => {
+          await Axios.post(`${environment.baseUrl}/fornecedor`, body);
+          setModal(false);
+          refreshData();
+        }}
+      />
       <TableViewer
         buttonTitle='Criar uma nova empresa'
         data={props.empresas.map((empresa) => [
@@ -38,8 +71,13 @@ const Empresas: React.FC<Props> = (props) => {
         ])}
         ids={props.empresas.map((empresa) => empresa.id)}
         headers={['Nome', 'CNPJ', 'UF']}
-        onDel={() => 'a'}
-        onView={() => 'a'}
+        onDel={async (id) => {
+          await Axios.delete(`${environment.baseUrl}/empresa`, {
+            params: { id }
+          });
+          refreshData();
+        }}
+        onView={() => setEdit(props.empresas)}
       />
     </div>
   );

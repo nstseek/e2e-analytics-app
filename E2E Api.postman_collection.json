@@ -1,0 +1,397 @@
+{
+	"info": {
+		"_postman_id": "8559bbf0-be0f-4f84-aeff-80bea718b1d9",
+		"name": "E2E Api",
+		"description": "All possible requests available in E2E Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get UFs",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/uf",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"uf"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5",
+							"description": "Define o id da linha que deve ser retornada",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Retorna uma lista dos UFs disponíveis"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Empresas",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/empresa",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"empresa"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "7",
+							"description": "Define o id da linha que deve ser retornada",
+							"disabled": true
+						},
+						{
+							"key": "fornecedores",
+							"value": "true",
+							"description": "Define se os fornecedores devem ser incluidos no resultado",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Gets a list of all UFs available"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Fornecedores",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/fornecedor",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"fornecedor"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "9",
+							"description": "Define o id da linha que deve ser retornada",
+							"disabled": true
+						},
+						{
+							"key": "empresas",
+							"value": "true",
+							"description": "Define se as empresas devem ser incluidas no resultado",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Retorna uma lista dos fornecedores disponíveis"
+			},
+			"response": []
+		},
+		{
+			"name": "Post UFs",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Abapó\",\r\n    \"sigla\": \"AO\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/uf",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"uf"
+					]
+				},
+				"description": "Insere um UF no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Empresa",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Nvidia Brasil Computacao Visual LTDA\",\r\n    \"cnpj\": \"95875648125402\",\r\n    \"fornecedores\": [\r\n        {\r\n            \"nome\": \"Lucas Martins Cardoso\",\r\n            \"email\": \"lucas.mc21@gmail.com\",\r\n            \"cnpj\": \"24514625451320\"\r\n        }\r\n    ],\r\n    \"uf_id\": 7\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/empresa",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"empresa"
+					]
+				},
+				"description": "Insere uma empresa no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Post Fornecedor",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"nome\": \"Pedro\",\r\n        \"email\": \"pedro@gmail.com\",\r\n        \"rg\": \"2542365412\",\r\n        \"data_nasc\": \"1998-04-16T03:00:00.000Z\",\r\n        \"cpf\": \"51245618752\",\r\n        \"empresas\": [\r\n            {\r\n                \"nome\": \"Dell Eletronicos LTDA\",\r\n                \"cnpj\": \"45546525451265\",\r\n                \"uf_id\": 7\r\n            }\r\n        ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/fornecedor",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"fornecedor"
+					]
+				},
+				"description": "Insere um fornecedor no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Put UFs",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"nome\": \"Amatí\",\r\n    \"sigla\": \"AX\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/uf?id=32",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"uf"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "32",
+							"description": "Define o id da linha que será atualizada"
+						}
+					]
+				},
+				"description": "Atualiza um UF no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Empresa",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"nome\": \"Intel Corporation\",\r\n        \"cnpj\": \"45654524654854\",\r\n        \"fornecedores\": [\r\n            {\r\n                \"id\": 16,\r\n                \"nome\": \"ACER Tecnologia LTDA\",\r\n                \"email\": \"acer@gmail.com\",\r\n                \"rg\": null,\r\n                \"data_nasc\": null,\r\n                \"cpf\": null,\r\n                \"cnpj\": \"21546645124502\",\r\n                \"empresas\": null\r\n            },\r\n            {\r\n                \"id\": 18,\r\n                \"nome\": \"ASUS Tecnologia LTDA\",\r\n                \"email\": \"asus@gmail.com\",\r\n                \"rg\": null,\r\n                \"data_nasc\": null,\r\n                \"cpf\": null,\r\n                \"cnpj\": \"98567845798564\",\r\n                \"empresas\": null\r\n            }\r\n        ],\r\n        \"uf_id\": 3\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/empresa?id=7",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"empresa"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "7",
+							"description": "Define o id da linha que será atualizada"
+						}
+					]
+				},
+				"description": "Atualiza uma empresa no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Put Fornecedor",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"id\": 19,\r\n        \"nome\": \"Pedro\",\r\n        \"email\": \"pedro@gmail.com\",\r\n        \"rg\": \"2542365412\",\r\n        \"data_nasc\": \"1998-04-16T03:00:00.000Z\",\r\n        \"cpf\": \"51245618752\",\r\n        \"cnpj\": null,\r\n        \"empresas\": [\r\n            {\r\n                \"id\": 26,\r\n                \"nome\": \"Ubisoft Games LTDA\",\r\n                \"cnpj\": \"45546525451265\",\r\n                \"uf_id\": 7\r\n            },\r\n            {\r\n                \"id\": 27,\r\n                \"nome\": \"Sony Computer Entertainment LTDA\",\r\n                \"cnpj\": \"32625531215487\",\r\n                \"uf_id\": 7\r\n            }\r\n        ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/fornecedor?id=19",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"fornecedor"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "19",
+							"description": "Define o id da linha que será atualizada"
+						}
+					]
+				},
+				"description": "Atualiza um fornecedor no banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete UFs",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/uf?id=33",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"uf"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "33",
+							"description": "Define o id da linha que será deletada"
+						}
+					]
+				},
+				"description": "Deleta um UF do banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Empresa",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/empresa?id=8",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"empresa"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "8",
+							"description": "Define o id da linha que será deletada"
+						}
+					]
+				},
+				"description": "Deleta uma empresa do banco de dados"
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Fornecedor",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://e2e-analytics-app.herokuapp.com/fornecedor",
+					"protocol": "https",
+					"host": [
+						"e2e-analytics-app",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"fornecedor"
+					]
+				},
+				"description": "Deleta um fornecedor do banco de dados"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
