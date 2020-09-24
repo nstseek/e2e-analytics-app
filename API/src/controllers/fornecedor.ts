@@ -17,21 +17,42 @@ const routes = (db: ReturnType<typeof knex>) => {
         any,
         Fornecedor[] | Fornecedor,
         null,
-        { id: number; empresas: 'true' | 'false' }
+        { id: number; empresas: 'true' | 'false'; nome: string; cnpj: string }
       >,
       res
     ) => {
       try {
         let response: Fornecedor[] = [];
         let fornecedores: Fornecedor[] = [];
-        if (req.query.id) {
-          response = await db
-            .select<Fornecedor[]>('*')
-            .from('' + tables.Fornecedor)
-            .where({ id: req.query.id });
-        } else {
-          response = await db.select('*').from('' + tables.Fornecedor);
-        }
+        const filterObj = {
+          id: 0
+        };
+        req.query.id ? (filterObj.id = req.query.id) : delete filterObj.id;
+        response =
+          req.query.cnpj && req.query.nome
+            ? await db
+                .select<Fornecedor[]>('*')
+                .from('' + tables.Fornecedor)
+                .where(filterObj)
+                .where(tables.Fornecedor.cnpj, 'LIKE', `%${req.query.cnpj}%`)
+                .where(tables.Fornecedor.nome, 'LIKE', `%${req.query.nome}%`)
+            : req.query.cnpj
+            ? await db
+                .select<Fornecedor[]>('*')
+                .from('' + tables.Fornecedor)
+                .where(filterObj)
+                .where(tables.Fornecedor.cnpj, 'LIKE', `%${req.query.cnpj}%`)
+            : req.query.nome
+            ? await db
+                .select<Fornecedor[]>('*')
+                .from('' + tables.Fornecedor)
+                .where(filterObj)
+                .where(tables.Fornecedor.nome, 'LIKE', `%${req.query.nome}%`)
+            : await db
+                .select<Fornecedor[]>('*')
+                .from('' + tables.Fornecedor)
+                .where(filterObj);
+
         if (req.query.empresas === 'true') {
           for (let fornecedor of response) {
             fornecedor = new Fornecedor(fornecedor, null, true);
@@ -57,6 +78,7 @@ const routes = (db: ReturnType<typeof knex>) => {
         }
         res.json(fornecedores.length === 1 ? fornecedores[0] : fornecedores);
       } catch (error) {
+        console.log(error);
         res.status(500);
         res.send(error);
       }
