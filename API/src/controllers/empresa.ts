@@ -49,7 +49,9 @@ const routes = (db: ReturnType<typeof knex>) => {
             empresas.push(new Empresa(empresa, fornecedores, false, true));
           }
         } else {
-          empresas = response.map((empresa) => new Empresa(empresa));
+          empresas = response.map(
+            (empresa) => new Empresa(empresa, null, true)
+          );
         }
         res.json(empresas.length === 1 ? empresas[0] : empresas);
       } catch (error) {

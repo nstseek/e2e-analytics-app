@@ -51,7 +51,9 @@ const routes = (db: ReturnType<typeof knex>) => {
             );
           }
         } else {
-          fornecedores = response.map((empresa) => new Fornecedor(empresa));
+          fornecedores = response.map(
+            (fornecedor) => new Fornecedor(fornecedor, null, true)
+          );
         }
         res.json(fornecedores.length === 1 ? fornecedores[0] : fornecedores);
       } catch (error) {
