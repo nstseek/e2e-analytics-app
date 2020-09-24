@@ -25,7 +25,7 @@ export const db = knex({
 } as knex.Config);
 log(chalk.yellow('Database connected.'));
 
-const port = 4000 || process.env.PORT;
+const port = process.env.PORT || 4000;
 
 log(chalk.blue('Creating express instance...'));
 
