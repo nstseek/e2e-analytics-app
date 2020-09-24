@@ -22,6 +22,7 @@ const routes = (db: ReturnType<typeof knex>) => {
             .from('' + tables.UF)
             .orderBy(tables.UF.nome);
         }
+        response = response.map((uf) => new UF(uf, true));
         res.json(response.length === 1 ? response[0] : response);
       } catch (error) {
         res.status(500);
