@@ -6,12 +6,12 @@
   "scripts": {
     "test": "jest",
     "start:watch": "tsc --watch & nodemon --experimental-specifier-resolution=node build/server.js",
-    "build": "rm -rf dist && tsc",
+    "build": "rm -rf build && tsc",
     "start": "tsc && node --experimental-specifier-resolution=node build/server.js",
     "prettier": "prettier --check \"src/**/*\"",
     "prettier:fix": "prettier --check \"src/**/*\" --write",
     "lint": "eslint",
-    "check": "npm run lint && npm run prettier && npm run build && npm run test"
+    "check": "npm run lint && npm run prettier && npm run build"
   },
   "repository": {
     "type": "git",
