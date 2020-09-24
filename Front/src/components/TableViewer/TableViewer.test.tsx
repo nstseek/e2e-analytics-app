@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import App from './App';
+import TableViewer from './TableViewer';
 
-describe('<TabContainer />', () => {
+describe('<TableViewer />', () => {
   let component;
 
   beforeEach(() => {
-    component = shallow(<App />);
+    component = shallow(<TableViewer />);
   });
 
   test('It should mount', () => {

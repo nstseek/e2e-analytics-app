@@ -1,0 +1,29 @@
+div#App {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  background-color: lightgray;
+  div#backdrop {
+    z-index: 1000;
+  }
+  & > header,
+  header.MuiAppBar-root {
+    display: flex;
+    align-items: center;
+    padding: 5px 34px;
+    width: 100%;
+    min-height: 55px;
+  }
+  & > header {
+    background-color: gray;
+    & > span {
+      color: white;
+      text-shadow: 3px 3px 5px black;
+    }
+  }
+  header.MuiAppBar-root {
+    background-color: #eee;
+    color: black;
+  }
+}

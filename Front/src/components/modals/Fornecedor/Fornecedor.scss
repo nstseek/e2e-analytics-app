@@ -1,0 +1,11 @@
+div.MuiFormControl-root.MuiTextField-root {
+  width: 100%;
+  height: 48px;
+  & > div {
+    height: 100%;
+  }
+}
+
+div.MuiInput-root {
+  width: 100%;
+}

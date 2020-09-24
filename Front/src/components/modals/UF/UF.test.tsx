@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import App from './App';
+import UF from './UF';
 
-describe('<TabContainer />', () => {
+describe('<UF />', () => {
   let component;
 
   beforeEach(() => {
-    component = shallow(<App />);
+    component = shallow(<UF />);
   });
 
   test('It should mount', () => {
