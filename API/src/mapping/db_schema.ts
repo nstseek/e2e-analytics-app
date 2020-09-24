@@ -27,6 +27,6 @@ const tables = {
     empresa_id: 'EMPRESA_ID',
     [Symbol.toPrimitive]: () => 'REL_FORNECEDOR_EMPRESA'
   }
-}
+};
 
 export default tables;
