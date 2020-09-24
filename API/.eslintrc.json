@@ -15,10 +15,12 @@
 	},
 	"plugins": ["@typescript-eslint"],
 	"rules": {
-		"node/no-missing-import": ["ignore"],
-		"indent": ["error", "space"],
+		"node/no-missing-import": 0,
+		"indent": ["error", 2],
 		"linebreak-style": ["error", "unix"],
 		"quotes": ["error", "single"],
-		"semi": ["error", "always"]
+		"semi": ["error", "always"],
+		"@typescript-eslint/no-explicit-any": 0,
+		"@typescript-eslint/explicit-module-boundary-types": 0
 	}
 }

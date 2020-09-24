@@ -29,7 +29,7 @@ const routes = (db: ReturnType<typeof knex>) => {
       }
     }
   );
-  router.post('', async (req: Request<any, UF, UF, {}>, res) => {
+  router.post('', async (req: Request<any, UF, UF, never>, res) => {
     try {
       const obj = new UF(req.body);
       const id = await db.insert(obj).into('' + tables.UF);

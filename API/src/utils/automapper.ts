@@ -10,7 +10,7 @@ export function autoMapper<T>(
   destination: T,
   upper = false,
   purge = false
-) {
+): void {
   Object.keys(destination).forEach((key) => {
     if (
       !origin[upper ? (_.toUpper(key) as keyof T) : (_.toLower(key) as keyof T)]

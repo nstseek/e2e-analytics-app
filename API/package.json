@@ -10,7 +10,7 @@
     "start": "tsc && node --experimental-specifier-resolution=node build/server.js",
     "prettier": "prettier --check \"src/**/*\"",
     "prettier:fix": "prettier --check \"src/**/*\" --write",
-    "lint": "eslint",
+    "lint": "eslint src/**/*.ts",
     "check": "npm run lint && npm run prettier && npm run build"
   },
   "repository": {
