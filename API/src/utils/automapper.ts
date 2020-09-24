@@ -9,9 +9,13 @@ export function autoMapper<T>(
   origin: T,
   destination: T,
   upper = false,
-  purge = false
+  purge = false,
+  log = false
 ): void {
+  log ? console.log(origin) : null;
+  log ? console.log(destination) : null;
   Object.keys(destination).forEach((key) => {
+    log ? console.log(key) : null;
     if (
       !origin[upper ? (_.toUpper(key) as keyof T) : (_.toLower(key) as keyof T)]
     ) {

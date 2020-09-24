@@ -6,6 +6,7 @@ import Fornecedor from '../models/fornecedor';
 import RelFornecedorEmpresa from '../models/relFornecedorEmpresa';
 import _ from 'lodash';
 import { autoMapper } from '../utils/automapper';
+import UF from '../models/uf';
 
 const routes = (db: ReturnType<typeof knex>) => {
   const router = express.Router();
@@ -21,16 +22,57 @@ const routes = (db: ReturnType<typeof knex>) => {
       >,
       res
     ) => {
+      const parseUF = (
+        empresa: Empresa & {
+          UF_NOME?: string;
+          UF_SIGLA?: string;
+        }
+      ) => {
+        const empresaParsed = new Empresa(empresa, null, true);
+        const uf = new UF({
+          nome: empresa.UF_NOME,
+          sigla: empresa.UF_SIGLA
+        });
+        uf.id = empresa.uf_id;
+        empresaParsed.uf = uf;
+        return empresaParsed;
+      };
       try {
         let response: Empresa[] = [];
         let empresas: Empresa[] = [];
         if (req.query.id) {
           response = await db
-            .select<Empresa[]>('*')
+            .select<Empresa[]>(
+              tables.Empresa + '.' + tables.Empresa.id,
+              tables.Empresa + '.' + tables.Empresa.nome,
+              tables.Empresa.cnpj,
+              tables.Empresa.uf_id,
+              tables.UF + '.' + tables.UF.nome + ' AS UF_NOME',
+              tables.UF + '.' + tables.UF.sigla + ' AS UF_SIGLA'
+            )
             .from('' + tables.Empresa)
-            .where({ id: req.query.id });
+            .leftJoin(
+              'UF',
+              tables.UF + '.' + tables.UF.id,
+              tables.Empresa + '.' + tables.Empresa.uf_id
+            )
+            .where(tables.Empresa + '.' + tables.Empresa.id, req.query.id);
         } else {
-          response = await db.select('*').from('' + tables.Empresa);
+          response = await db
+            .select(
+              tables.Empresa + '.' + tables.Empresa.id,
+              tables.Empresa + '.' + tables.Empresa.nome,
+              tables.Empresa.cnpj,
+              tables.Empresa.uf_id,
+              tables.UF + '.' + tables.UF.nome + ' AS UF_NOME',
+              tables.UF + '.' + tables.UF.sigla + ' AS UF_SIGLA'
+            )
+            .from('' + tables.Empresa)
+            .leftJoin(
+              'UF',
+              tables.UF + '.' + tables.UF.id,
+              tables.Empresa + '.' + tables.Empresa.uf_id
+            );
         }
         if (req.query.fornecedores === 'true') {
           for (let empresa of response) {
@@ -47,11 +89,10 @@ const routes = (db: ReturnType<typeof knex>) => {
               )
               .where(tables.RelFornecedorEmpresa.empresa_id, empresa.id);
             empresas.push(new Empresa(empresa, fornecedores, false, true));
+            empresas = response.map(parseUF);
           }
         } else {
-          empresas = response.map(
-            (empresa) => new Empresa(empresa, null, true)
-          );
+          empresas = response.map(parseUF);
         }
         res.json(empresas.length === 1 ? empresas[0] : empresas);
       } catch (error) {
