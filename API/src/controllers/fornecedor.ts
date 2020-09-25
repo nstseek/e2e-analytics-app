@@ -156,6 +156,10 @@ const routes = (db: ReturnType<typeof knex>) => {
       ) => {
         if (body.empresas) {
           await ctx.transaction(async (trx) => {
+            const body_NoRelation: Fornecedor = _.cloneDeep(body);
+            body_NoRelation.empresas = null;
+            delete body_NoRelation.empresas;
+            await updateFornecedor(body_NoRelation);
             const empresasRel = await trx
               .select<RelFornecedorEmpresa[]>('*')
               .from('' + tables.RelFornecedorEmpresa)
@@ -182,16 +186,18 @@ const routes = (db: ReturnType<typeof knex>) => {
                 (empresa) => empresaRel.empresa_id === empresa.id
               );
               if (empresa) {
+                const emp = new Empresa(empresa, null, false, false, true);
+                delete emp.uf;
                 await trx('' + tables.Empresa)
                   .where({ id: empresa.id })
-                  .update(new Empresa(empresa, null, false, false, true));
+                  .update(emp);
               }
             }
             for (const empresa of body.empresas) {
               if (empresa.id === undefined) {
-                const id = await ctx
-                  .insert(new Empresa(empresa, null, false, false, true))
-                  .into('' + tables.Empresa);
+                const emp = new Empresa(empresa, null, false, false, true);
+                delete emp.uf;
+                const id = await ctx.insert(emp).into('' + tables.Empresa);
                 const obj: RelFornecedorEmpresa = {
                   empresa_id: id[0],
                   fornecedor_id: req.query.id
