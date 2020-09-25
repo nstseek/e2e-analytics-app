@@ -9,7 +9,7 @@ import {
   TextField,
   IconButton
 } from '@material-ui/core';
-import Axios from 'axios';
+import Axios, { AxiosResponse } from 'axios';
 import Inputmask from 'inputmask';
 import React, { useRef, useState } from 'react';
 import environment from '../../environment';
@@ -24,26 +24,35 @@ import { connect } from 'react-redux';
 import { AppState } from '../../configureStore';
 import { Dispatch } from 'redux';
 import Fornecedor from '../modals/Fornecedor/Fornecedor';
+import _ from 'lodash';
+import { arrConv } from '../../utils/tools';
 
 export interface Fornecedor {
-  id?: string;
+  id?: number;
   nome: string;
   email: string;
   rg?: string;
-  data_nasc?: Date;
+  data_nasc?: string;
   cpf?: string;
   cnpj?: string;
   empresas: Empresa[];
 }
 
+export const clearFornecedor: Fornecedor = {
+  email: '',
+  empresas: [],
+  nome: '',
+  cnpj: '',
+  cpf: '',
+  data_nasc: null,
+  id: 0,
+  rg: ''
+};
+
 interface Props {
   fornecedores: Fornecedor[];
   updateSystem(state: Partial<SystemState>): void;
   updateData(state: Partial<DataState>): void;
-}
-
-function arrConv<T>(obj: Array<T> | T): Array<T> {
-  return Array.isArray(obj) ? obj : [obj];
 }
 
 const Fornecedores: React.FC<Props> = (props) => {
@@ -54,6 +63,9 @@ const Fornecedores: React.FC<Props> = (props) => {
 
   const refreshData = async () => {
     try {
+      props.updateSystem({
+        loading: true
+      });
       const params: { empresas: 'true'; nome?: string; cnpj?: string } = {
         empresas: 'true',
         nome: nome.current?.value || '',
@@ -77,6 +89,9 @@ const Fornecedores: React.FC<Props> = (props) => {
         }
       });
     }
+    props.updateSystem({
+      loading: false
+    });
   };
   return (
     <div>
@@ -84,9 +99,82 @@ const Fornecedores: React.FC<Props> = (props) => {
         onCancel={() => setModal(false)}
         edit={edit}
         open={modal}
-        onSave={async (body) => {
-          await Axios.post(`${environment.baseUrl}/fornecedor`, body);
+        onSave={async (originalBody) => {
+          props.updateSystem({
+            loading: true
+          });
+          const body = _.cloneDeep(originalBody);
+          if (body.cnpj) {
+            body.cnpj = body.cnpj.replace(/\D/g, '');
+          } else {
+            delete body.cnpj;
+          }
+          if (body.rg) {
+            body.rg = body.rg.replace(/\D/g, '');
+          } else {
+            delete body.rg;
+          }
+          if (body.cpf) {
+            body.cpf = body.cpf.replace(/\D/g, '');
+          } else {
+            delete body.cpf;
+          }
+          if (body.data_nasc) {
+            body.data_nasc = new Date(body.data_nasc).toISOString();
+            body.data_nasc = body.data_nasc.slice(
+              0,
+              body.data_nasc.indexOf('T')
+            );
+          } else {
+            delete body.data_nasc;
+          }
+          if (body.empresas) {
+            body.empresas = body.empresas.map((empresa) => {
+              const emp = { ...empresa };
+              delete emp.fornecedores;
+              if (!emp.id) {
+                delete emp.id;
+              }
+              emp.cnpj = emp.cnpj.replace(/\D/g, '');
+              return emp;
+            });
+          } else {
+            delete body.empresas;
+          }
+
+          try {
+            const response: AxiosResponse<null> = edit
+              ? await Axios.put(`${environment.baseUrl}/fornecedor`, body, {
+                  params: { id: body.id }
+                })
+              : await Axios.post(`${environment.baseUrl}/fornecedor`, body);
+            props.updateSystem({
+              dialog: {
+                content: 'Alterações salvas',
+                open: true,
+                title: 'Salvo'
+              }
+            });
+          } catch (error) {
+            props.updateSystem({
+              dialog: {
+                content: String(error),
+                open: true,
+                title: 'Erro'
+              }
+            });
+          }
+
+          props.updateSystem({
+            dialog: {
+              content: 'Alterações salvas',
+              open: true,
+              title: 'Salvo'
+            }
+          });
+
           setModal(false);
+          setEdit(null);
           refreshData();
         }}
       />
@@ -163,6 +251,9 @@ const Fornecedores: React.FC<Props> = (props) => {
                   <TableCell>
                     <IconButton
                       onClick={async () => {
+                        props.updateSystem({
+                          loading: true
+                        });
                         await Axios.delete(
                           `${environment.baseUrl}/fornecedor`,
                           { params: { id: fornecedor.id } }
@@ -173,6 +264,7 @@ const Fornecedores: React.FC<Props> = (props) => {
                     </IconButton>
                     <IconButton
                       onClick={() => {
+                        console.log(fornecedor);
                         setEdit(fornecedor);
                         setModal(true);
                       }}>
