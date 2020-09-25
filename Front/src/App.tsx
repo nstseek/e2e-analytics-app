@@ -30,6 +30,9 @@ interface Props {
 
 const App: React.FC<Props> = (props) => {
   const refreshData = async () => {
+    props.updateSystem({
+      loading: true
+    });
     try {
       const empresasResponse = await Axios.get<Empresa[]>(
         `${environment.baseUrl}/empresa`,
@@ -64,9 +67,6 @@ const App: React.FC<Props> = (props) => {
   };
 
   useEffect(() => {
-    props.updateSystem({
-      loading: true
-    });
     refreshData();
   }, []);
 
@@ -110,7 +110,7 @@ const App: React.FC<Props> = (props) => {
       <header>
         <span>E2E analytics app</span>
       </header>
-      <Tabs />
+      <Tabs refreshData={refreshData} />
     </div>
   );
 };
