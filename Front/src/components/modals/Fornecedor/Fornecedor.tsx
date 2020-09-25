@@ -3,232 +3,302 @@ import {
   DialogTitle,
   DialogContent,
   DialogContentText,
-  DialogActions,
-  Button,
   TextField,
   IconButton,
+  Select,
   MenuItem,
-  Select
+  DialogActions,
+  Button,
+  FormControl,
+  InputLabel,
+  Typography,
+  CardContent,
+  Card
 } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import { useRef } from 'react';
-import './Fornecedor.scss';
+import { connect } from 'react-redux';
+import { clearEmpresa, Empresa as EmpresaDTO } from '../../Empresas/Empresas';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
+import React, { useEffect, useRef, useState } from 'react';
 import { AppState } from '../../../configureStore';
 import { UF } from '../../UFs/UFs';
-import { connect } from 'react-redux';
-import { Empresa } from '../../Empresas/Empresas';
-import { Fornecedor as FornecedorDTO } from '../../Fornecedores/Fornecedores';
+import './Fornecedor.scss';
+import {
+  clearFornecedor,
+  Fornecedor as FornecedorDTO
+} from '../../Fornecedores/Fornecedores';
+import { Input } from '@material-ui/core';
+import { Identifier } from 'typescript';
+import Inputmask from 'inputmask';
+import { cnpjConfig, cpfConfig, rgConfig } from '../../../utils/masks';
+import _ from 'lodash';
 
 interface Props {
-  onSave(data: {
-    nome: string;
-    email: string;
-    rg: string;
-    data_nasc: string;
-    cpf: string;
-    cnpj: string;
-    empresas: Empresa[];
-  }): void;
+  onSave(data: FornecedorDTO): void;
   onCancel(): void;
   open: boolean;
   edit: FornecedorDTO;
   ufs: UF[];
+  data?: FornecedorDTO;
 }
 
 const Fornecedor: React.FC<Props> = (props) => {
-  const nome = useRef<HTMLElement & { value: string }>();
-  const email = useRef<HTMLElement & { value: string }>();
-  const rg = useRef<HTMLElement & { value: string }>();
-  const data_nasc = useRef<HTMLElement & { value: string }>();
-  const cpf = useRef<HTMLElement & { value: string }>();
-  const cnpj = useRef<HTMLElement & { value: string }>();
-  const [empresas, setEmpresas] = useState<
-    {
-      nome: { value: string };
-      cnpj: { value: string };
-      uf_id: { value: string };
-    }[]
-  >();
+  const [formGroup, setFormGroup] = useState<FornecedorDTO>(
+    _.cloneDeep(clearFornecedor)
+  );
 
   useEffect(() => {
     if (props.edit) {
-      const arr = empresas ? [...empresas] : [];
-      for (const _empresa of props.edit.empresas) {
-        arr?.push({
-          cnpj: null,
-          nome: null,
-          uf_id: null
+      props.edit.cnpj = props.edit.cnpj
+        ? Inputmask.format(props.edit.cnpj, cnpjConfig)
+        : props.edit.cnpj;
+      props.edit.cpf = props.edit.cpf
+        ? Inputmask.format(props.edit.cpf, cpfConfig)
+        : props.edit.cpf;
+      props.edit.rg = props.edit.rg
+        ? Inputmask.format(props.edit.rg, rgConfig)
+        : props.edit.rg;
+      props.edit.data_nasc = props.edit.data_nasc
+        ? new Date(props.edit.data_nasc).toISOString().slice(0, 10)
+        : props.edit.data_nasc;
+      if (props.edit.empresas) {
+        props.edit.empresas = props.edit.empresas.map((empresa) => {
+          empresa.cnpj = empresa.cnpj
+            ? Inputmask.format(empresa.cnpj, cnpjConfig)
+            : empresa.cnpj;
+          return empresa;
         });
+      } else {
+        props.edit.empresas = [];
       }
-      setEmpresas(arr);
+      setFormGroup(props.edit);
     } else {
-      setEmpresas([]);
+      setFormGroup(_.cloneDeep(clearFornecedor));
     }
   }, [props.edit]);
 
   return (
-    <div className='Fornecedor'>
+    <div className='Empresa'>
       <Dialog
         open={props.open}
         onClose={() => {
-          setEmpresas([]);
           props.onCancel();
         }}>
-        <DialogTitle>Fornecedor</DialogTitle>
+        <DialogTitle>Empresa</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <TextField
-              label='Nome'
-              value={props.edit ? props.edit.nome : undefined}
-              onChange={(event) => {
-                if (!nome.current) nome.current = event.target;
-              }}
-            />
-            <br />
-            <TextField
-              value={props.edit ? props.edit.email : undefined}
-              label='Email'
-              onChange={(event) => {
-                if (!email.current) email.current = event.target;
-              }}
-            />
-            <br />
-            <TextField
-              value={props.edit ? props.edit.rg : undefined}
-              label='RG'
-              onChange={(event) => {
-                if (!rg.current) rg.current = event.target;
-              }}
-            />
-            <br />
-            <TextField
-              value={
-                props.edit && props.edit.data_nasc
-                  ? new Date(props.edit.data_nasc)
-                      .toISOString()
-                      .slice(
-                        0,
-                        new Date(props.edit.data_nasc)
-                          .toISOString()
-                          .indexOf('T')
-                      )
-                  : undefined
-              }
-              type='date'
-              onChange={(event) => {
-                if (!data_nasc.current) data_nasc.current = event.target;
-              }}
-            />
-            <br />
-            <TextField
-              value={props.edit ? props.edit.cpf : undefined}
-              label='CPF'
-              onChange={(event) => {
-                if (!cpf.current) cpf.current = event.target;
-              }}
-            />
-            <br />
-            <TextField
-              value={props.edit ? props.edit.cnpj : undefined}
-              label='CNPJ'
-              onChange={(event) => {
-                if (!cnpj.current) cnpj.current = event.target;
-              }}
-            />
-            <br />
-            <IconButton
-              onClick={() => {
-                const arr = empresas ? [...empresas] : [];
-                arr?.push({
-                  cnpj: null,
-                  nome: null,
-                  uf_id: null
-                });
-                setEmpresas(arr);
-              }}>
-              <AddIcon />
-            </IconButton>
-            {empresas?.map((empresa, index) => {
-              return (
-                <div key={index}>
+            <div className='input-row'>
+              <TextField
+                type='text'
+                label='Nome'
+                value={formGroup.nome}
+                onChange={(event) => {
+                  setFormGroup({
+                    ...formGroup,
+                    nome: event.target.value
+                  });
+                }}
+              />
+              <TextField
+                type='text'
+                label='Email'
+                value={formGroup.email}
+                onChange={(event) => {
+                  setFormGroup({
+                    ...formGroup,
+                    email: event.target.value
+                  });
+                }}
+              />
+            </div>
+            <div className='input-row'>
+              <TextField
+                type='text'
+                label='CNPJ'
+                disabled={
+                  !!formGroup.cpf || !!formGroup.data_nasc || !!formGroup.rg
+                }
+                error={
+                  formGroup.cnpj?.replace(/\D/g, '').length > 0 &&
+                  formGroup.cnpj?.replace(/\D/g, '').length !== 14
+                }
+                helperText={
+                  formGroup.cnpj?.replace(/\D/g, '').length > 0 &&
+                  formGroup.cnpj?.replace(/\D/g, '').length !== 14
+                    ? 'Um CNPJ deve conter 14 dígitos'
+                    : ''
+                }
+                value={formGroup.cnpj}
+                onChange={(event) => {
+                  event.target.value = event.target.value.replace(/\D/g, '');
+                  if (event.target.value.length <= 14) {
+                    setFormGroup({
+                      ...formGroup,
+                      cnpj: Inputmask.format(event.target.value, cnpjConfig)
+                    });
+                  }
+                }}
+              />
+              <TextField
+                type='text'
+                label='CPF'
+                disabled={!!formGroup.cnpj}
+                error={
+                  formGroup.cpf?.replace(/\D/g, '').length > 0 &&
+                  formGroup.cpf?.replace(/\D/g, '').length !== 11
+                }
+                helperText={
+                  formGroup.cpf?.replace(/\D/g, '').length > 0 &&
+                  formGroup.cpf?.replace(/\D/g, '').length !== 11
+                    ? 'Um CPF deve conter 11 dígitos'
+                    : ''
+                }
+                value={formGroup.cpf}
+                onChange={(event) => {
+                  event.target.value = event.target.value.replace(/\D/g, '');
+                  if (event.target.value.length <= 11) {
+                    setFormGroup({
+                      ...formGroup,
+                      cpf: Inputmask.format(event.target.value, cpfConfig)
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div className='input-row'>
+              <TextField
+                type='date'
+                helperText='Data de nascimento'
+                disabled={!!formGroup.cnpj}
+                value={formGroup.data_nasc}
+                onChange={(event) => {
+                  setFormGroup({
+                    ...formGroup,
+                    data_nasc: event.target.value
+                  });
+                }}
+              />
+              <TextField
+                type='text'
+                label='RG'
+                disabled={!!formGroup.cnpj}
+                value={formGroup.rg}
+                error={
+                  formGroup.rg?.replace(/\D/g, '').length > 0 &&
+                  (formGroup.rg?.replace(/\D/g, '').length < 7 ||
+                    formGroup.rg?.replace(/\D/g, '').length > 10)
+                }
+                helperText={
+                  formGroup.rg?.replace(/\D/g, '').length > 0 &&
+                  (formGroup.rg?.replace(/\D/g, '').length < 7 ||
+                    formGroup.rg?.replace(/\D/g, '').length > 10)
+                    ? 'Um RG deve conter entre 7 e 10 dígitos'
+                    : ''
+                }
+                onChange={(event) => {
+                  event.target.value = event.target.value.replace(/\D/g, '');
+                  if (event.target.value.length <= 10) {
+                    setFormGroup({
+                      ...formGroup,
+                      rg: Inputmask.format(event.target.value, rgConfig)
+                    });
+                  }
+                }}
+              />
+            </div>
+            <div className='input-row'>
+              <Typography variant='body1'>Adicionar empresa</Typography>
+              <IconButton
+                color='primary'
+                onClick={() => {
+                  const fg = { ...formGroup };
+                  formGroup.empresas.push(_.cloneDeep(clearEmpresa));
+                  setFormGroup(fg);
+                }}>
+                <AddIcon />
+              </IconButton>
+            </div>
+            {formGroup.empresas.map((empresa, index) => (
+              <Card key={index} style={{ margin: '13px' }}>
+                <CardContent>
                   <IconButton
-                    color='secondary'
                     onClick={() => {
-                      const arr = empresas ? [...empresas] : [];
-                      arr?.splice(index, 1);
-                      setEmpresas(arr);
+                      const fg = { ...formGroup };
+                      formGroup.empresas.splice(index, 1);
+                      setFormGroup(fg);
                     }}>
                     <DeleteIcon />
                   </IconButton>
-                  <h6>Empresa {index + 1}</h6>
-                  <Select
-                    value={
-                      props.edit && props.edit.empresas.length > index
-                        ? empresa.uf_id
-                        : undefined
-                    }
-                    onChange={(event: any) => {
-                      if (!empresa.uf_id) empresa.uf_id = event.target;
-                    }}>
-                    {props.ufs.map((uf, index) => (
-                      <MenuItem value={uf.id} key={index}>{uf.sigla}</MenuItem>
-                    ))}
-                  </Select>
-                  <TextField
-                    value={
-                      props.edit && props.edit.empresas.length > index
-                        ? empresa.nome
-                        : undefined
-                    }
-                    label='Nome'
-                    onChange={(event) => {
-                      if (!empresa.nome) empresa.nome = event.target;
-                    }}
-                  />
-                  <br />
-                  <TextField
-                    value={
-                      props.edit && props.edit.empresas.length > index
-                        ? empresa.cnpj
-                        : undefined
-                    }
-                    label='CNPJ'
-                    onChange={(event) => {
-                      if (!empresa.cnpj) empresa.cnpj = event.target;
-                    }}
-                  />
-                  <br />
-                </div>
-              );
-            })}
+                  <div className='input-row'>
+                    <TextField
+                      type='text'
+                      label='Nome'
+                      value={empresa.nome}
+                      onChange={(event) => {
+                        const fg = { ...formGroup };
+                        fg.empresas[index].nome = event.target.value;
+                        setFormGroup(fg);
+                      }}
+                    />
+                    <TextField
+                      type='text'
+                      label='CNPJ'
+                      error={
+                        empresa.cnpj.replace(/\D/g, '').length > 0 &&
+                        empresa.cnpj.replace(/\D/g, '').length !== 14
+                      }
+                      helperText={
+                        empresa.cnpj.replace(/\D/g, '').length > 0 &&
+                        empresa.cnpj.replace(/\D/g, '').length !== 14
+                          ? 'Um CNPJ deve conter 14 dígitos'
+                          : ''
+                      }
+                      value={empresa.cnpj}
+                      onChange={(event) => {
+                        event.target.value = event.target.value.replace(
+                          /\D/g,
+                          ''
+                        );
+                        if (event.target.value.length <= 14) {
+                          const fg = { ...formGroup };
+                          fg.empresas[index].cnpj = Inputmask.format(
+                            event.target.value,
+                            cnpjConfig
+                          );
+                          setFormGroup(fg);
+                        }
+                      }}
+                    />
+                  </div>
+                  <div className='input-row'>
+                    <TextField
+                      select
+                      label='UF'
+                      value={empresa.uf_id}
+                      onChange={(event) => {
+                        const fg = { ...formGroup };
+                        fg.empresas[index].uf_id = Number(event.target.value);
+                        setFormGroup(fg);
+                      }}>
+                      {props.ufs.map((uf) => (
+                        <MenuItem key={uf.id} value={uf.id}>
+                          {uf.sigla}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={() => {
-              setEmpresas([]);
-              props.onCancel();
-            }}
-            color='primary'>
+          <Button onClick={props.onCancel} color='primary'>
             Cancelar
           </Button>
           <Button
             onClick={() => {
-              props.onSave({
-                cnpj: cnpj.current?.value || '',
-                cpf: cpf.current?.value || '',
-                data_nasc: data_nasc.current?.value || '',
-                email: email.current?.value || '',
-                nome: nome.current?.value || '',
-                rg: rg.current?.value || '',
-                empresas: empresas?.map((empresa) => ({
-                  cnpj: empresa.cnpj?.value,
-                  nome: empresa.nome?.value,
-                  uf_id: empresa.uf_id?.value
-                }))
-              });
+              props.onSave(formGroup);
             }}
             color='primary'
             autoFocus>
