@@ -16,16 +16,19 @@ import './TableViewer.scss';
 
 interface Props {
   data: (string | number)[][];
-  ids: (number | string)[];
   headers: (string | number)[];
   buttonTitle: string;
   onDel(id: string | number): void;
   onView(id: string | number): void;
+  onCreate(): void;
 }
 
 const TableViewer: React.FC<Props> = (props) => (
   <TableContainer>
-    <Button variant='contained' startIcon={<AddIcon />}>
+    <Button
+      variant='contained'
+      onClick={props.onCreate}
+      startIcon={<AddIcon />}>
       {props.buttonTitle}
     </Button>
     <Table>
@@ -36,17 +39,17 @@ const TableViewer: React.FC<Props> = (props) => (
         <TableCell></TableCell>
       </TableHead>
       <TableBody>
-        {props.data.map((row, index) => {
+        {props.data.map((row, rowIndex) => {
           return (
-            <TableRow key={index}>
+            <TableRow key={rowIndex}>
               {row.map((col, index) => (
                 <TableCell key={index}>{col}</TableCell>
               ))}
               <TableCell>
-                <IconButton onClick={() => props.onDel(props.ids[index])}>
+                <IconButton onClick={() => props.onDel(rowIndex)}>
                   <DeleteIcon />
                 </IconButton>
-                <IconButton onClick={() => props.onView(props.ids[index])}>
+                <IconButton onClick={() => props.onView(rowIndex)}>
                   <VisibilityIcon />
                 </IconButton>
               </TableCell>
