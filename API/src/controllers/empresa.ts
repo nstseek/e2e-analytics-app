@@ -26,16 +26,15 @@ const routes = (db: ReturnType<typeof knex>) => {
         empresa: Empresa & {
           UF_NOME?: string;
           UF_SIGLA?: string;
+          UF_ID?: number;
         }
       ) => {
-        const empresaParsed = new Empresa(empresa, null, true);
         const uf = new UF({
           nome: empresa.UF_NOME,
           sigla: empresa.UF_SIGLA
         });
-        uf.id = empresa.uf_id;
-        empresaParsed.uf = uf;
-        return empresaParsed;
+        uf.id = empresa.UF_ID;
+        return uf;
       };
       try {
         let response: Empresa[] = [];
@@ -76,6 +75,7 @@ const routes = (db: ReturnType<typeof knex>) => {
         }
         if (req.query.fornecedores === 'true') {
           for (let empresa of response) {
+            const uf = parseUF(empresa);
             empresa = new Empresa(empresa, null, true);
             const fornecedores = await db
               .select<Fornecedor[]>('*')
@@ -88,11 +88,22 @@ const routes = (db: ReturnType<typeof knex>) => {
                 tables.Fornecedor + '.' + tables.Fornecedor.id
               )
               .where(tables.RelFornecedorEmpresa.empresa_id, empresa.id);
-            empresas.push(new Empresa(empresa, fornecedores, false, true));
-            empresas = response.map(parseUF);
+            const empresaWithFornec = new Empresa(
+              empresa,
+              fornecedores,
+              false,
+              true
+            );
+            empresaWithFornec.uf = uf;
+            empresas.push(empresaWithFornec);
           }
         } else {
-          empresas = response.map(parseUF);
+          empresas = response.map((empresa) => {
+            const empresaParsed = new Empresa(empresa, null, true, false);
+            const uf = parseUF(empresa);
+            empresaParsed.uf = uf;
+            return empresaParsed;
+          });
         }
         res.json(empresas.length === 1 ? empresas[0] : empresas);
       } catch (error) {
@@ -135,6 +146,7 @@ const routes = (db: ReturnType<typeof knex>) => {
           });
         } else {
           const obj = new Empresa(body, null, false, false, true);
+          delete obj.uf;
           const id = await ctx.insert(obj, '' as '*').into('' + tables.Empresa);
           obj.id = id[0];
           return obj;
@@ -166,6 +178,10 @@ const routes = (db: ReturnType<typeof knex>) => {
       ) => {
         if (body.fornecedores) {
           await ctx.transaction(async (trx) => {
+            const body_NoRelation: Empresa = _.cloneDeep(body);
+            body_NoRelation.fornecedores = null;
+            delete body_NoRelation.fornecedores;
+            await updateEmpresa(body_NoRelation);
             const fornecedoresRel = await trx
               .select<RelFornecedorEmpresa[]>('*')
               .from('' + tables.RelFornecedorEmpresa)
@@ -212,10 +228,10 @@ const routes = (db: ReturnType<typeof knex>) => {
           });
         } else {
           const obj = new Empresa(body, null, false, false, true);
+          delete obj.uf;
           await ctx('' + tables.Empresa)
             .where({ id: req.query.id })
             .update(obj);
-
           obj.id = Number(req.query.id);
           return obj;
         }
