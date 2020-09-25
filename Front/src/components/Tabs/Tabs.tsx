@@ -14,7 +14,11 @@ export enum TabState {
   Fornecedor
 }
 
-const Tabs: React.FC = () => {
+interface Props {
+  refreshData(): void;
+}
+
+const Tabs: React.FC<Props> = (props) => {
   const [tabState, setTabState] = useState(TabState.Empresa);
 
   return (
@@ -22,7 +26,10 @@ const Tabs: React.FC = () => {
       <AppBar position='static'>
         <MaterialTabs
           value={tabState}
-          onChange={(_event, state) => setTabState(state)}>
+          onChange={(_event, state) => {
+            props.refreshData();
+            setTabState(state);
+          }}>
           <Tab label='UF' />
           <Tab label='Empresa' />
           <Tab label='Fornecedor' />
