@@ -4,11 +4,8 @@ import {
   DialogContent,
   DialogContentText,
   TextField,
-  IconButton,
-  MenuItem,
   DialogActions,
-  Button,
-  Typography
+  Button
 } from '@material-ui/core';
 import { connect } from 'react-redux';
 import React, { useEffect, useState } from 'react';

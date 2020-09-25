@@ -1,12 +1,18 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import UF from './UF';
+import configureStore from '../../../configureStore';
+import { Provider } from 'react-redux';
 
 describe('<UF />', () => {
   let component;
 
   beforeEach(() => {
-    component = shallow(<UF />);
+    component = shallow(
+      <Provider store={configureStore()}>
+        <UF />
+      </Provider>
+    );
   });
 
   test('It should mount', () => {

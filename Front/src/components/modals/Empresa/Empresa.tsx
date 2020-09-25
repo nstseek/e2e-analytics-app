@@ -5,12 +5,9 @@ import {
   DialogContentText,
   TextField,
   IconButton,
-  Select,
   MenuItem,
   DialogActions,
   Button,
-  FormControl,
-  InputLabel,
   Typography,
   CardContent,
   Card
@@ -19,16 +16,11 @@ import { connect } from 'react-redux';
 import { clearEmpresa, Empresa as EmpresaDTO } from '../../Empresas/Empresas';
 import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { AppState } from '../../../configureStore';
 import { UF } from '../../UFs/UFs';
 import './Empresa.scss';
-import {
-  clearFornecedor,
-  Fornecedor as FornecedorDTO
-} from '../../Fornecedores/Fornecedores';
-import { Input } from '@material-ui/core';
-import { Identifier } from 'typescript';
+import { clearFornecedor } from '../../Fornecedores/Fornecedores';
 import Inputmask from 'inputmask';
 import { cnpjConfig, cpfConfig, rgConfig } from '../../../utils/masks';
 import { arrConv } from '../../../utils/tools';

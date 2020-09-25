@@ -1,5 +1,5 @@
 import Inputmask from 'inputmask';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { AppState } from '../../configureStore';
 import { Fornecedor } from '../Fornecedores/Fornecedores';
@@ -9,7 +9,7 @@ import { DataState, updateData } from '../../stores/data';
 import { SystemState, updateSystem } from '../../stores/system';
 import { Dispatch } from 'redux';
 import TableViewer from '../TableViewer/TableViewer';
-import Axios, { AxiosResponse } from 'axios';
+import Axios from 'axios';
 import environment from '../../environment';
 import Empresa from '../modals/Empresa/Empresa';
 import _ from 'lodash';
@@ -116,7 +116,7 @@ const Empresas: React.FC<Props> = (props) => {
           }
 
           try {
-            const response: AxiosResponse<null> = edit
+            edit
               ? await Axios.put(`${environment.baseUrl}/empresa`, body, {
                   params: { id: body.id }
                 })

@@ -6,8 +6,7 @@ import { DataState, updateData } from '../../stores/data';
 import { SystemState, updateSystem } from '../../stores/system';
 import './UFs.scss';
 import TableViewer from '../TableViewer/TableViewer';
-import Axios, { AxiosResponse } from 'axios';
-import _ from 'lodash';
+import Axios from 'axios';
 import environment from '../../environment';
 import UF from '../modals/UF/UF';
 
@@ -66,7 +65,7 @@ const UFs: React.FC<Props> = (props) => {
           });
 
           try {
-            const response: AxiosResponse<null> = edit
+            edit
               ? await Axios.put(`${environment.baseUrl}/uf`, body, {
                   params: { id: body.id }
                 })

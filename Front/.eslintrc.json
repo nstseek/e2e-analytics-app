@@ -16,6 +16,7 @@
   "plugins": ["@typescript-eslint"],
   "rules": {
     "indent": "off",
+    "@typescript-eslint/camelcase": 0,
     "linebreak-style": ["error", "unix"],
     "quotes": ["error", "single"],
     "semi": ["error", "always"],

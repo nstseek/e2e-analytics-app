@@ -9,7 +9,7 @@ import {
   TextField,
   IconButton
 } from '@material-ui/core';
-import Axios, { AxiosResponse } from 'axios';
+import Axios from 'axios';
 import Inputmask from 'inputmask';
 import React, { useRef, useState } from 'react';
 import environment from '../../environment';
@@ -143,7 +143,7 @@ const Fornecedores: React.FC<Props> = (props) => {
           }
 
           try {
-            const response: AxiosResponse<null> = edit
+            edit
               ? await Axios.put(`${environment.baseUrl}/fornecedor`, body, {
                   params: { id: body.id }
                 })
@@ -264,7 +264,6 @@ const Fornecedores: React.FC<Props> = (props) => {
                     </IconButton>
                     <IconButton
                       onClick={() => {
-                        console.log(fornecedor);
                         setEdit(fornecedor);
                         setModal(true);
                       }}>
