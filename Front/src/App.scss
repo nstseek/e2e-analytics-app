@@ -5,7 +5,7 @@ div#App {
   height: 100vh;
   background-color: lightgray;
   div#backdrop {
-    z-index: 1000;
+    z-index: 10000;
   }
   & > header,
   header.MuiAppBar-root {
