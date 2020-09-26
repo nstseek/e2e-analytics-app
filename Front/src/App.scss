@@ -6,6 +6,8 @@ div#App {
   background-color: lightgray;
   div#backdrop {
     z-index: 10000;
+    flex-direction: column;
+    color: white;
   }
   & > header,
   header.MuiAppBar-root {

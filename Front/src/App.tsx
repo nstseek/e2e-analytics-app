@@ -14,7 +14,8 @@ import {
   DialogActions,
   Button,
   Backdrop,
-  CircularProgress
+  CircularProgress,
+  Typography
 } from '@material-ui/core';
 import { AppState } from './configureStore';
 import { SystemState, updateSystem } from './stores/system';
@@ -74,6 +75,10 @@ const App: React.FC<Props> = (props) => {
     <div id='App'>
       <Backdrop open={props.system.loading} id='backdrop'>
         <CircularProgress color='inherit' />
+        <Typography variant='body2'>
+          Isso pode levar um tempo pois a API hosteada no heroku hiberna após 30
+          minutos de inatividade
+        </Typography>
       </Backdrop>
       <Dialog
         open={props.system.dialog.open}
